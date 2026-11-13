@@ -1,0 +1,304 @@
+{
+  "version": 1,
+  "filter": "nearest",
+  "animated": false,
+  "coordinateOrigin": "top-left",
+  "characters": {
+    "gringo": {
+      "name": "Gringo",
+      "image": "gringo.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2,
+      "frames": {
+        "down": {
+          "x": 0,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 180,
+            "y": 42,
+            "w": 270,
+            "h": 555
+          },
+          "footAnchor": {
+            "x": 315,
+            "y": 597
+          }
+        },
+        "left": {
+          "x": 627,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 186,
+            "y": 42,
+            "w": 254,
+            "h": 555
+          },
+          "footAnchor": {
+            "x": 313,
+            "y": 597
+          }
+        },
+        "right": {
+          "x": 0,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 186,
+            "y": 41,
+            "w": 253,
+            "h": 556
+          },
+          "footAnchor": {
+            "x": 312,
+            "y": 597
+          }
+        },
+        "up": {
+          "x": 627,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 178,
+            "y": 41,
+            "w": 270,
+            "h": 556
+          },
+          "footAnchor": {
+            "x": 313,
+            "y": 597
+          }
+        }
+      }
+    },
+    "esposa": {
+      "name": "Esposa",
+      "image": "esposa.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2,
+      "frames": {
+        "down": {
+          "x": 0,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 164,
+            "y": 46,
+            "w": 316,
+            "h": 549
+          },
+          "footAnchor": {
+            "x": 322,
+            "y": 595
+          }
+        },
+        "left": {
+          "x": 627,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 173,
+            "y": 44,
+            "w": 291,
+            "h": 551
+          },
+          "footAnchor": {
+            "x": 318,
+            "y": 595
+          }
+        },
+        "right": {
+          "x": 0,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 159,
+            "y": 43,
+            "w": 282,
+            "h": 556
+          },
+          "footAnchor": {
+            "x": 300,
+            "y": 599
+          }
+        },
+        "up": {
+          "x": 627,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 156,
+            "y": 45,
+            "w": 306,
+            "h": 554
+          },
+          "footAnchor": {
+            "x": 309,
+            "y": 599
+          }
+        }
+      }
+    },
+    "filho": {
+      "name": "Filho",
+      "image": "filho.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2,
+      "frames": {
+        "down": {
+          "x": 0,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 220,
+            "y": 137,
+            "w": 217,
+            "h": 435
+          },
+          "footAnchor": {
+            "x": 328,
+            "y": 572
+          }
+        },
+        "left": {
+          "x": 627,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 184,
+            "y": 137,
+            "w": 225,
+            "h": 435
+          },
+          "footAnchor": {
+            "x": 296,
+            "y": 572
+          }
+        },
+        "right": {
+          "x": 0,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 216,
+            "y": 119,
+            "w": 212,
+            "h": 434
+          },
+          "footAnchor": {
+            "x": 322,
+            "y": 553
+          }
+        },
+        "up": {
+          "x": 627,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 190,
+            "y": 114,
+            "w": 218,
+            "h": 439
+          },
+          "footAnchor": {
+            "x": 299,
+            "y": 553
+          }
+        }
+      }
+    },
+    "filha": {
+      "name": "Filha",
+      "image": "filha.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2,
+      "frames": {
+        "down": {
+          "x": 0,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 183,
+            "y": 130,
+            "w": 274,
+            "h": 423
+          },
+          "footAnchor": {
+            "x": 320,
+            "y": 553
+          }
+        },
+        "left": {
+          "x": 627,
+          "y": 0,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 200,
+            "y": 136,
+            "w": 244,
+            "h": 417
+          },
+          "footAnchor": {
+            "x": 322,
+            "y": 553
+          }
+        },
+        "right": {
+          "x": 0,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 184,
+            "y": 108,
+            "w": 244,
+            "h": 420
+          },
+          "footAnchor": {
+            "x": 306,
+            "y": 528
+          }
+        },
+        "up": {
+          "x": 627,
+          "y": 627,
+          "w": 627,
+          "h": 627,
+          "visibleBounds": {
+            "x": 167,
+            "y": 107,
+            "w": 276,
+            "h": 421
+          },
+          "footAnchor": {
+            "x": 305,
+            "y": 528
+          }
+        }
+      }
+    }
+  }
+}

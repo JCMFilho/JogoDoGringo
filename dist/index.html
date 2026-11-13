@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#17271d">
+<meta name="description" content="Ajude a família Paim de Araujo a sobreviver ao caos. Um arcade de partidas rápidas e uma dinastia sem limites.">
+<title>Gringo: Fábrica de Herdeiros — Paim de Araujo</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+<script defer src="atlas.js"></script><script defer src="world.js?v=1.2.1"></script><script defer src="engine.js?v=1.2.1"></script><script defer src="music.js?v=1.2.1"></script><script defer src="game.js?v=1.2.1"></script>
+</head>
+<body>
+<main class="game-shell" aria-label="Gringo: Fábrica de Herdeiros">
+  <div class="canvas-wrap" id="canvas-wrap"><canvas id="game" width="960" height="600" tabindex="0" aria-label="Casa da família Paim de Araujo. WASD ou setas para andar; E ou espaço para interagir. Clique ou toque para caminhar até um objeto."></canvas></div>
+  <div class="hud" aria-label="Controles e indicadores da partida">
+    <header class="hud-top">
+      <div class="brand"><span class="brand-mark">G+</span><div><strong>GRINGO</strong><span>PAIM DE ARAUJO</span></div></div>
+      <section class="hud-stats" aria-label="Estado da família">
+        <div class="hud-stat"><span>FILHOS</span><strong id="kids">2</strong></div><div class="hud-stat"><span>CAIXA</span><strong id="money">R$ 120</strong></div>
+        <div class="hud-stat health"><div><span>CASA</span><strong id="integrity-value">100%</strong></div><div class="meter"><i id="integrity-bar"></i></div></div>
+        <div class="hud-stat chaos"><div><span>CAOS</span><strong id="chaos-value">12%</strong></div><div class="meter"><i id="chaos-bar"></i></div></div>
+      </section>
+      <nav class="hud-options" aria-label="Opções"><button id="view-map" class="icon-button" aria-label="Ver toda a casa" title="Visão geral (V)" hidden>⤢</button><button id="music" class="icon-button" aria-label="Desativar música de fundo" aria-pressed="true" title="Música de fundo">♫</button><button id="sound" class="icon-button" aria-label="Ativar efeitos sonoros" title="Efeitos sonoros">♩<span id="sound-label" class="sr-only">Efeitos off</span></button><button id="pause" class="icon-button" aria-label="Abrir menu e pausar" title="Menu e pausa (P)">☰<span id="pause-label" class="sr-only">Menu</span></button></nav>
+    </header>
+    <div class="stage-chip"><span class="live-dot"></span><span id="stage-badge">CASA PEQUENA</span><span class="chip-separator">·</span><span id="round-number">RODADA 1</span></div>
+    <div class="score-chip"><span id="score">0000</span><small>PTS</small><span class="chip-separator">·</span><time id="clock">00:00</time></div>
+    <section class="hud-objective" id="prep" aria-label="Preparação para o bebê" hidden><div class="objective-title"><span>PRÓXIMO HERDEIRO</span><b id="prep-timer">60s</b></div><div id="prep-tasks"></div></section>
+    <div class="world-toast" id="world-toast" role="status" aria-live="polite"></div><div class="active-effects" id="active-effects"></div><div class="interaction-hint" id="interaction-hint"><kbd>E</kbd><span>Interagir</span></div>
+    <div class="hud-bottom">
+      <div class="hud-tools"><div class="supplies"><span>♜ <b id="bottles">3</b></span><div class="combo-mini" title="Combo do casal"><span>♥</span><div class="combo-track"><i id="combo-bar"></i></div><span id="combo-value">0%</span></div></div><div class="tool-row"><div class="powers" id="powers" aria-label="Poderes do Gringo"></div><button class="upgrade-trigger" id="open-upgrades" title="Melhorias e equipe (M)" aria-label="Abrir melhorias e equipe">⌂<small>Melhorias</small></button></div></div>
+      <div class="control-tip"><kbd>WASD</kbd> mover <kbd>E</kbd> agir <span>·</span> clique para ir</div>
+      <button id="more-baby" class="baby-button"><span class="baby-plus">+</span><span><strong>QUERO MAIS UM!</strong><small id="next-cost">R$ 28</small></span></button>
+    </div>
+    <div class="mobile-controls" aria-label="Controles por toque"><div class="dpad"><button data-move="up" aria-label="Andar para cima">↑</button><button data-move="left" aria-label="Andar para esquerda">←</button><button data-move="down" aria-label="Andar para baixo">↓</button><button data-move="right" aria-label="Andar para direita">→</button></div><button class="touch-action" id="touch-action" aria-label="Interagir">E</button></div>
+  </div>
+  <div class="modal-backdrop" id="modal-backdrop"><section class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Menu do jogo"></section></div><div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+</main>
+</body>
+</html>
