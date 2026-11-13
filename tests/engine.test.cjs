@@ -3,6 +3,15 @@ const assert = require('node:assert/strict');
 const {Game,STATIONS,MILESTONES,STAGES,DOORWAYS,findPath,canWalk,dist} = require('../dist/engine.js');
 function make(){let seed=12345;return new Game({random:()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}});}
 function advance(game,seconds){for(let i=0;i<Math.ceil(seconds*20);i++)game.update(.05);}
+
+test('Sabrina leaves a short pause between nearby cleaning tasks',()=>{
+  const g=make();
+  g.state.children=[];g.timers.mess=100;
+  g.state.toys=[5,7,9].map((offset,i)=>({x:g.state.wife.x+offset,y:g.state.wife.y,id:900+i,kind:0}));
+  advance(g,.05);assert.equal(g.state.stats.cleaned,1);
+  advance(g,.65);assert.equal(g.state.stats.cleaned,1);
+  advance(g,.3);assert.equal(g.state.stats.cleaned,2);
+});
 function finishPrep(game){const s=game.state,p=s.prep;assert.ok(p);while(s.prep&&s.prep.clean<s.prep.needClean){if(!s.toys.length)game.spawnToy();game.clean(s.toys[0]);}game.stationCooldown=0;while(s.prep&&s.prep.bottles<s.prep.needBottles){s.bottles=0;game.stationCooldown=0;game.station('kitchen');}game.workCooldown=0;game.station('work');}
 test('new family has two children and all stations are reachable',()=>{const g=make();assert.equal(g.state.kids,2);assert.equal(g.state.children.length,2);for(const station of STATIONS){const path=findPath(g.state.player,station);assert.ok(path.length,station.id);for(const p of path)assert.ok(canWalk(p.x,p.y,10));}assert.ok(findPath({x:150,y:224},{x:766,y:219}).some(p=>p.x>610));});
 test('baby requires cleaning, bottles AND work and awards only one birth',()=>{const g=make(),before=g.state.money;assert.ok(g.beginPrep());assert.equal(g.state.money,before-28);assert.equal(g.state.kids,2);finishPrep(g);assert.equal(g.state.kids,3);assert.equal(g.state.round,2);assert.equal(g.state.prep,null);assert.ok(g.state.earned.includes(3));assert.equal(g.birth(),false);assert.equal(g.state.kids,3);assert.ok(g.state.score>300);});

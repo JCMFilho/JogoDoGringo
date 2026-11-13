@@ -298,7 +298,7 @@ const FamilyGame = (() => {
         if(!this.planWifeTask(this.aiTarget)){this.aiTarget=null;wife.path=[];this.timers.ally=0;wife.moving=false;return;}
       }
       const before={x:wife.x,y:wife.y},hadPath=wife.path.length>0;
-      const speed=(this.effect('brazil')?245:145)*(1+s.home*.14)*(this.effect('super')?1.3:1);this.follow(wife,dt,speed);
+      const speed=(this.effect('brazil')?245:145)*.8*(1+s.home*.14)*(this.effect('super')?1.3:1);this.follow(wife,dt,speed);
       this.aiStall=hadPath&&dist(before,wife)<.01?this.aiStall+dt:0;
       const arrived=dist(wife,p)<48&&this.clear(wife,p,0);
       if(!arrived&&this.aiRepath<=0&&(wife.navBlocked||this.aiStall>.35||!wife.path.length)){
@@ -308,7 +308,7 @@ const FamilyGame = (() => {
       if(arrived){const t=this.aiTarget;let done=false;
         if(t.type==='toy')done=this.clean(t.ref,'wife');else if(t.type==='child')done=this.feed(t.ref,'wife');else done=this.station(t.id,'wife',t);
         if(!done)this.aiAvoid.set(this.wifeTaskKey(t),s.time+.5);
-        this.aiTarget=null;wife.path=[];wife.moving=false;this.aiStall=0;this.timers.ally=done?.08:0;
+        this.aiTarget=null;wife.path=[];wife.moving=false;this.aiStall=0;this.timers.ally=done ? (t.type==='toy' ? .8 : .08) : 0;
       }
     }
     update(dt,input={}){

@@ -79,7 +79,7 @@ globalThis.FAMILY_ATLAS = {
       }
     },
     "esposa": {
-      "name": "Esposa",
+      "name": "Sabrina",
       "image": "esposa.png",
       "width": 1254,
       "height": 1254,

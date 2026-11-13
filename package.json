@@ -1,6 +1,6 @@
 {
   "name": "gringo-fabrica-de-herdeiros",
-  "version": "1.3.0",
+  "version": "1.3.2",
   "private": true,
   "description": "Arcade de sobrevivência familiar em Canvas, sem dependências.",
   "scripts": {

@@ -42,13 +42,13 @@ Referência: [documentação oficial do GitHub Pages sobre workflows personaliza
 
 ## Interface e circulação — versão 1.1
 
-A partida ocupa uma única tela. O HUD sobre o jogo reúne filhos, caixa, integridade, caos, mamadeiras, combo e poderes compactos. O botão **QUERO MAIS UM!** e os objetivos da preparação ficam dentro da tela. Melhorias, prioridade da Esposa, conquistas e reinício são acessados pelos menus; não há painéis laterais nem página de apresentação durante a partida.
+A partida ocupa uma única tela. O HUD sobre o jogo reúne filhos, caixa, integridade, caos, mamadeiras, combo e poderes compactos. O botão **QUERO MAIS UM!** e os objetivos da preparação ficam dentro da tela. Melhorias, prioridade da Sabrina, conquistas e reinício são acessados pelos menus; não há painéis laterais nem página de apresentação durante a partida.
 
 A família é identificada como **Paim de Araujo** na casa, no menu e na cidade. O quarto dos mini herdeiros tem uma entrada de 112 pixels pela sala e uma passagem de 158 pixels pela cozinha. As camas foram reposicionadas para liberar a circulação. As paredes desenhadas e as colisões compartilham a mesma geometria, e as rotas partem de um ponto alcançável sem cortar quinas.
 
 ### Correção de navegação — versão 1.1.1
 
-A navegação mantém distância de segurança das paredes e conclui cada curva antes de seguir para o próximo ponto. A Esposa mantém a tarefa atual, acompanha crianças em movimento e recalcula rotas obstruídas. Alvos inacessíveis são adiados para que ela possa atender outras tarefas. O estoque cheio de mamadeiras também pode ser organizado para cumprir a preparação de um bebê. Quando não há tarefas, ela informa isso no menu da equipe.
+A navegação mantém distância de segurança das paredes e conclui cada curva antes de seguir para o próximo ponto. A Sabrina mantém a tarefa atual, acompanha crianças em movimento e recalcula rotas obstruídas. Alvos inacessíveis são adiados para que ela possa atender outras tarefas. O estoque cheio de mamadeiras também pode ser organizado para cumprir a preparação de um bebê. Quando não há tarefas, ela informa isso no menu da equipe.
 
 Os testes incluem as posições exatas que reproduziam a quina, centenas de rotas com taxas de quadros e velocidades diferentes, recuperação de rotas bloqueadas e 20 simulações de dois minutos com 11 filhos.
 
@@ -81,11 +81,11 @@ As expansões trazem pontos extras de mamadeiras, trabalho e reparo. Cada área 
 
 A música de fundo é uma composição original em chiptune com ritmo brasileiro leve, sintetizada por Web Audio. Começa após a interação de início da partida e pausa nos menus ou quando a aba perde o foco. Pode ser desligada no botão ♫; o botão de efeitos é independente. Não há download de trilha nem dependência de internet para tocar.
 
-A família começa com a Esposa e dois filhos. Clique em **QUERO MAIS UM!** para pagar a preparação e abrir um desafio de 60 segundos: recolher brinquedos, preparar mamadeiras na cozinha e trabalhar no notebook. Só depois de cumprir os três objetivos chega um novo filho. Se o tempo acabar, a chegada é adiada e a casa perde 6% de integridade; o jogador pode tentar de novo.
+A família começa com a Sabrina e dois filhos. Clique em **QUERO MAIS UM!** para pagar a preparação e abrir um desafio de 60 segundos: recolher brinquedos, preparar mamadeiras na cozinha e trabalhar no notebook. Só depois de cumprir os três objetivos chega um novo filho. Se o tempo acabar, a chegada é adiada e a casa perde 6% de integridade; o jogador pode tentar de novo.
 
 O notebook gera renda por interação e tem um intervalo de 2,6 segundos. A cozinha prepara 3 mamadeiras por R$ 5. As ferramentas reparam 22% da casa por R$ 12. A renda e as despesas automáticas acontecem a cada 10 segundos de partida. A família quebra em R$ −60 ou quando a integridade da casa chega a zero.
 
-A Esposa busca rotas pela casa, limpa brinquedos, alimenta as crianças, prepara mamadeiras e repara danos. A prioridade pode ser equilibrada ou voltada à limpeza, no menu Melhorias e equipe (M). Ações próximas no tempo dos dois pais carregam mais rápido o combo, alternando **Amor Infinito**, **Super Pais** e **Mutirão da Família**.
+A Sabrina busca rotas pela casa, limpa brinquedos, alimenta as crianças, prepara mamadeiras e repara danos. A prioridade pode ser equilibrada ou voltada à limpeza, no menu Melhorias e equipe (M). Ações próximas no tempo dos dois pais carregam mais rápido o combo, alternando **Amor Infinito**, **Super Pais** e **Mutirão da Família**.
 
 Os cinco poderes têm duração e recarga próprias. Made in Brazil e International Daddy estão disponíveis no começo; Family First libera com 3 filhos, Pai de Multidões com 5 e Plano de Expansão com 7. O jogador pode comprar robôs, melhorar a renda de **Trabalhar como escravo para meu pai** e expandir de casa para mansão, condomínio, bairro e cidade. As expansões mudam o cenário, restauram a casa e aumentam a renda e a capacidade confortável.
 
