@@ -2,24 +2,34 @@
 (() => {
   'use strict';
   const {Game,MILESTONES,STAGES,POWERS,STATIONS,INTERIOR_WALLS,DOORWAYS,clamp,dist,W,H}=FamilyGame;
+  const ASSET_BASE=document.documentElement.dataset.assetBase||'';
   const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
   const SAVE_KEY='gringo-save-v1',BEST_KEY='gringo-best-v1',SOUND_KEY='gringo-sound-v1',MUSIC_KEY='gringo-music-v1';
   const storage={get(key){try{return localStorage.getItem(key);}catch{return null;}},set(key,value){try{localStorage.setItem(key,value);return true;}catch{return false;}},remove(key){try{localStorage.removeItem(key);}catch{}}};
-  let game=new Game(),running=false,modalOpen=true,modalType='intro',lastFrame=0,uiTimer=0,saveTimer=0,toastTimer=null;
+  let game=new Game(),running=false,modalOpen=true,modalType='',lastFrame=0,uiTimer=0,saveTimer=0,toastTimer=null;
   let keys={},clickTarget=null,particles=[],floaters=[],soundOn=storage.get(SOUND_KEY)==='true',audio=null;
   let best=Number(storage.get(BEST_KEY))||2,loaded=false,previousFocus=null,sceneEnding=false,imagesReady=false;
-  let musicOn=storage.get(MUSIC_KEY)!=='false',overview=false,buildFlash=0;
+  let musicOn=storage.get(MUSIC_KEY)!=='false',overview=false,buildFlash=0,audioUnlocked=false,renderDensity=0;
   const camera={x:0,y:0,zoom:1},MINIMAP={x:W-168,y:H-215,w:150,h:108};
   const music=new FamilyMusic.Player(()=>{initAudio();return audio;});
   const images={},atlas=globalThis.FAMILY_ATLAS.characters;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const money=n=>`R$ ${Math.floor(n).toLocaleString('pt-BR')}`;
   const formatTime=t=>`${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;
-  const loadImage=name=>new Promise(resolve=>{const im=new Image();images[name]=im;im.onload=()=>resolve(true);im.onerror=()=>resolve(false);im.src=`assets/characters/${name}.png`;});
+  const loadImage=name=>new Promise(resolve=>{const im=new Image();images[name]=im;im.onload=()=>resolve(true);im.onerror=()=>resolve(false);im.src=`${ASSET_BASE}assets/characters/${name}.png`;});
   Promise.all(['gringo','esposa','filho','filha'].map(loadImage)).then(ok=>{imagesReady=ok.every(Boolean);if(!imagesReady)toast('Uma imagem não carregou. Verifique a pasta assets/characters.','warn');});
 
   function initAudio(){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume().catch(()=>{});}catch{soundOn=false;}}
-  function syncMusic(){music.setPlaying(musicOn&&loaded&&running&&!modalOpen&&!document.hidden);$('music').setAttribute('aria-pressed',String(musicOn));$('music').setAttribute('aria-label',musicOn?'Desativar música de fundo':'Ativar música de fundo');$('music').title=musicOn?'♫ Música ligada — clique para desativar':'♫ Música desligada — clique para ativar';$('music').classList.toggle('selected',musicOn);}
+  function syncMusic(){music.setPlaying(audioUnlocked&&musicOn&&loaded&&running&&!modalOpen&&!document.hidden);$('music').setAttribute('aria-pressed',String(musicOn));$('music').setAttribute('aria-label',musicOn?'Desativar música de fundo':'Ativar música de fundo');$('music').title=musicOn?'♫ Música ligada — clique para desativar':'♫ Música desligada — clique para ativar';$('music').classList.toggle('selected',musicOn);}
+  function unlockAudio(){if(audioUnlocked)return;audioUnlocked=true;syncMusic();}
+  addEventListener('pointerup',unlockAudio,{capture:true});
+  addEventListener('keydown',unlockAudio,{capture:true});
+  function resizeCanvas(){
+    const box=canvas.getBoundingClientRect();renderDensity=clamp(window.devicePixelRatio||1,1,3);
+    const width=Math.max(1,Math.round((box.width||W)*renderDensity)),height=Math.max(1,Math.round((box.height||H)*renderDensity));
+    if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
+  }
+  addEventListener('resize',resizeCanvas);
   function updateCamera(){const world=game.world;if(overview&&game.state.home){camera.zoom=Math.min(W/world.width,H/world.height);camera.x=-(W/camera.zoom-world.width)/2;camera.y=-(H/camera.zoom-world.height)/2;}else{camera.zoom=1;camera.x=clamp(game.state.player.x-W/2,0,Math.max(0,world.width-W));camera.y=clamp(game.state.player.y-H/2,0,Math.max(0,world.height-H));}}
   function toggleOverview(){if(modalOpen||!running||!game.state.home)return;overview=!overview;updateCamera();updateUI();}
   function beep(frequency=440,length=.08,type='square',volume=.035,delay=0){
@@ -29,7 +39,7 @@
   }
   function chime(){[523,659,784,1047].forEach((f,i)=>beep(f,.16,'triangle',.07,i*.09));}
   function toast(text,tone='good'){$('world-toast').textContent=text;$('world-toast').className='world-toast show'+(tone==='warn'?' danger':'');$('announcer').textContent=text;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('world-toast').classList.remove('show'),4500);}
-  function spriteMarkup(name,child=false){return `<div class="intro-sprite${child?' child':''}${name==='filha'?' girl':''}"><img src="assets/characters/${name}.png" alt="${name==='esposa'?'Esposa':name==='gringo'?'Gringo':name==='filho'?'Filho':'Filha'}"></div>`;}
+  function spriteMarkup(name,child=false){return `<div class="intro-sprite${child?' child':''}${name==='filha'?' girl':''}"><img src="${ASSET_BASE}assets/characters/${name}.png" alt="${name==='esposa'?'Esposa':name==='gringo'?'Gringo':name==='filho'?'Filho':'Filha'}"></div>`;}
   const familyMarkup=()=>`<div class="intro-family">${spriteMarkup('filho',true)}${spriteMarkup('gringo')}${spriteMarkup('esposa')}${spriteMarkup('filha',true)}</div>`;
   function openModal(type,html){
     const wasOpen=modalOpen;modalOpen=true;modalType=type;keys={};clickTarget=null;
@@ -40,14 +50,7 @@
     if(loaded)saveGame();
   }
   function closeModal(){modalOpen=false;modalType='';$('modal-backdrop').hidden=true;keys={};if(previousFocus&&document.contains(previousFocus))previousFocus.focus();else canvas.focus({preventScroll:true});previousFocus=null;syncMusic();}
-  function intro(){
-    let saved=null;try{saved=JSON.parse(storage.get(SAVE_KEY));}catch{}
-    const probe=new Game(),canResume=probe.restore(saved);
-    openModal('intro',`${familyMarkup()}<span class="eyebrow">BEM-VINDO À FÁBRICA</span><h2>Um sobrenome.<br><em>Uma ambição absurda.</em></h2><p>A família Paim de Araujo tem dois filhos e um plano: transformar a família em uma cidade. Antes disso, alguém precisa recolher os brinquedos.</p><ul class="help-list"><li><span>⌨</span><span><strong>WASD / setas</strong> para andar. <strong>E / espaço</strong> para agir.<br>Ou clique / toque nos objetos para ir até eles.</span></li><li><span>♥</span><span>A Esposa cuida da casa com você. Façam tarefas juntos para ativar os <strong>combos do casal.</strong></span></li><li><span>+</span><span>“<strong>QUERO MAIS UM!</strong>” abre um desafio de 60s.<br>Limpe, prepare mamadeiras e trabalhe antes da chegada.</span></li></ul><button class="primary orange" id="start-game">${canResume?'CONTINUAR A FAMÍLIA':'COMEÇAR A DINASTIA'} <span>→</span></button>${canResume?'<button class="secondary" id="fresh-game">Começar uma nova partida</button>':''}<p style="font-size:9px;text-align:center;margin-bottom:0">Partidas salvas neste navegador · Amor infinito. Orçamento finito.</p>`);
-    $('start-game').onclick=()=>{if(canResume)game.restore(saved);start();};
-    if($('fresh-game'))$('fresh-game').onclick=()=>{game=new Game();start();};
-  }
-  function start(){loaded=true;running=true;closeModal();if(soundOn)initAudio();updateUI();saveGame();toast('A casa é pequena. A ambição, não. Bora, família!');}
+  function start(){loaded=true;running=true;closeModal();if(soundOn&&audioUnlocked)initAudio();updateUI();saveGame();toast('A casa é pequena. A ambição, não. Bora, família!');}
   function pauseGame(){
     if(modalOpen||!running)return;
     openModal('pause',`${familyMarkup()}<span class="eyebrow">UM RESPIRO MERECIDO</span><h2>Até superpais<br><em>precisam de pausa.</em></h2><p>A família está esperando. O caos também.</p><div class="modal-meta"><span>HERDEIROS<strong>${game.state.kids}</strong></span><span>PONTOS<strong>${game.state.score}</strong></span><span>TEMPO<strong>${formatTime(game.state.time)}</strong></span></div><button class="primary orange" id="resume-game">VOLTAR PARA O CAOS →</button><button class="secondary" id="pause-help">Como jogar</button>`);
@@ -65,15 +68,15 @@
     $('close-upgrades').onclick=closeModal;updateUI();
   }
   function showHelp(){
-    const fromIntro=modalType==='intro';
     openModal('help',`<span class="eyebrow">MANUAL DE SOBREVIVÊNCIA</span><h2>Paternidade no<br><em>modo arcade.</em></h2><ul class="help-list"><li><span>⌨</span><span><strong>WASD ou setas:</strong> mover. <strong>E ou espaço:</strong> interagir.<br><strong>Clique / toque:</strong> caminhar e agir no alvo.<br><strong>1–5:</strong> poderes. <strong>M:</strong> melhorias.<br><strong>P / Esc:</strong> menu e pausa.</span></li><li><span>▤</span><span><strong>Brinquedos no chão:</strong> recolha para baixar o caos.<br><strong>Crianças com mamadeira:</strong> estão com fome.</span></li><li><span>♜</span><span><strong>Cozinha:</strong> 3 mamadeiras por R$ 5.<br><strong>Notebook:</strong> trabalhe por R$ 22 (melhorável).<br><strong>Ferramentas:</strong> repare 22% da casa por R$ 12.</span></li><li><span>♥</span><span>A Esposa alimenta, limpa, prepara mamadeiras e repara. Ações dos dois em até <strong>7 segundos</strong> carregam o combo mais rápido. Alterne a prioridade dela em Melhorias e equipe (M).</span></li><li><span>+</span><span>Prepare cada chegada em <strong>60 segundos</strong>. Os objetivos aparecem na tela; a ajuda da Esposa conta. O custo é pago no início do desafio.</span></li><li><span>⌂</span><span>Compre melhorias e expanda para <strong>mansão, condomínio, bairro e cidade</strong>. Toda expansão renova a casa e aumenta a renda.</span></li><li><span>⚑</span><span>A casa cai com <strong>0% de integridade</strong>. A família quebra com <strong>R$ −60</strong>. Os recordes ficam neste navegador. A aba em segundo plano pausa a partida.</span></li></ul><button class="primary orange" id="close-help">ENTENDI. BORA, FAMÍLIA! →</button>`);
-    $('close-help').onclick=()=>fromIntro?intro():closeModal();
+    $('close-help').onclick=closeModal;
+    $('modal').insertAdjacentHTML('beforeend','<a class="secondary help-link" href="help/">Abrir apresentação e manual completo ↗</a>');
   }
   function showAchievements(){
     openModal('achievements',`<span class="eyebrow">DO SOFÁ AO MUNICÍPIO</span><h2>A árvore genealógica<br><em>virou floresta.</em></h2><p>Conquistas desta partida. Cada marco dá pontos e uma ajuda no caixa.</p><ol class="milestones">${MILESTONES.map(([n,title])=>`<li class="${game.state.kids>=n?'unlocked':''}"><b>${n}</b><span>${title}</span><span class="ach-icon">${game.state.kids>=n?'✓':'○'}</span></li>`).join('')}</ol><button class="primary orange" id="close-achievements">VOLTAR À FAMÍLIA →</button>`);$('close-achievements').onclick=closeModal;
   }
   function confirmRestart(){
-    if(!loaded){intro();return;}
+    if(!loaded)return;
     openModal('restart',`<span class="eyebrow">OUTRA CHANCE, MESMA AMBIÇÃO</span><h2>Recomeçar<br><em>a dinastia?</em></h2><p>A partida atual será reiniciada com dois filhos. Seu recorde de <strong>${best} herdeiros</strong> será mantido.</p><button class="primary orange" id="confirm-restart">SIM, REINICIAR FAMÍLIA</button><button class="secondary" id="cancel-restart">Continuar com a família atual</button>`);
     $('confirm-restart').onclick=()=>{game=new Game();clickTarget=null;particles=[];floaters=[];sceneEnding=false;start();};$('cancel-restart').onclick=closeModal;
   }
@@ -106,7 +109,7 @@
         const buttons=[...$('modal').querySelectorAll('button:not(:disabled),a[href],[tabindex="0"]')];if(!buttons.length)return;
         const first=buttons[0],last=buttons[buttons.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
       }
-      if(event.key==='Escape'&&['pause','help','achievements','restart','upgrades'].includes(modalType)){event.preventDefault();if(!loaded)intro();else closeModal();}return;
+      if(event.key==='Escape'&&['pause','help','achievements','restart','upgrades'].includes(modalType)){event.preventDefault();closeModal();}return;
     }
     if(!running)return;
     const key=event.key.toLowerCase();
@@ -200,11 +203,12 @@
 
   // World art is drawn as small, integer-aligned pixel shapes. Character images are the approved assets.
   function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
-  function text(label,x,y,size=10,color='#5b553e',align='left'){ctx.font=`600 ${size}px "DM Sans", Arial, sans-serif`;ctx.textAlign=align;ctx.fillStyle=color;ctx.fillText(label,Math.round(x),Math.round(y));ctx.textAlign='left';}
+  const GAME_FONT='system-ui, -apple-system, "Segoe UI", sans-serif';
+  function text(label,x,y,size=10,color='#5b553e',align='left'){ctx.font=`600 ${Math.max(9,size)}px ${GAME_FONT}`;ctx.textAlign=align;ctx.fillStyle=color;ctx.fillText(label,x,y);ctx.textAlign='left';}
   function box(x,y,w,h,top,side='#534c3d',depth=7){rect(x,y+depth,w,h,side);rect(x,y,w,h,top);rect(x+3,y+3,w-6,3,'#ffffff18');}
   function plant(x,y,scale=1){ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);rect(-9,-12,18,16,'#9e6b4d');rect(-11,-14,22,6,'#be8f67');rect(-2,-37,4,24,'#42643e');rect(-13,-35,14,11,'#5e8c4c');rect(0,-42,13,13,'#65964f');rect(-16,-28,16,9,'#7ba755');rect(1,-27,14,10,'#416d40');ctx.restore();}
   function windowFrame(x,y,w=74){rect(x-4,y-4,w+8,47,'#9f8e63');rect(x,y,w,38,'#a4c8be');rect(x+4,y+3,w/2-7,29,'#c6e0cf');rect(x+w/2,y+3,w/2-4,29,'#b8d8c5');rect(x+w/2-2,y,4,38,'#f2e6bb');rect(x,y+32,w,6,'#eee1b6');rect(x-7,y-7,9,45,'#d88f78');rect(x+w-2,y-7,9,45,'#d88f78');}
-  function labelPlate(label,x,y){const lines=label.split('\n'),w=Math.max(...lines.map(line=>line.length))*5.5+14;rect(x-w/2,y-11,w,17+(lines.length-1)*11,'#f2e9c7cf');lines.forEach((line,i)=>text(line,x,y+1+i*11,8,'#7e7959','center'));}
+  function labelPlate(label,x,y){const lines=label.split('\n');ctx.font=`600 10.5px ${GAME_FONT}`;const w=Math.ceil(Math.max(...lines.map(line=>ctx.measureText(line).width)))+18;rect(x-w/2,y-12,w,20+(lines.length-1)*13,'#fff4dff0');lines.forEach((line,i)=>text(line,x,y+2+i*13,10.5,'#3f4c34','center'));}
   const roomColors={suite:'#c1cfbd',playroom:'#dabaa5',dorm:'#bec9c9',dining:'#d8c896',daycare:'#cbbbd2',laundry:'#b6cdd0',classroom:'#d8be91',playground:'#aac496',gym:'#c49d73',townhall:'#c7bb9c',clinic:'#d0ddd0',living:'#ddbd86',kitchen:'#c7d5c0',nursery:'#d3b6a4'};
   function extensionFloors(){
     const world=game.world;
@@ -354,6 +358,8 @@
     rect(463,133,16,4,'#d6a27b');text('E ele ainda acha que cabe mais um...',480,583,20,'#fff0c1','center');
   }
   function render(){
+    if(renderDensity!==clamp(window.devicePixelRatio||1,1,3))resizeCanvas();
+    ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
     ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,W,H);
     if(sceneEnding){renderEnding();return;}
     updateCamera();ctx.save();ctx.scale(camera.zoom,camera.zoom);ctx.translate(-camera.x,-camera.y);
@@ -395,6 +401,8 @@
     render();requestAnimationFrame(frame);
   }
   // Read-only inspection surface for debugging a saved run; gameplay is driven by normal controls.
-  globalThis.GringoGame={snapshot:()=>game.snapshot(),view:()=>({camera:{...camera},overview,rooms:game.world.rooms.map(r=>({...r})),world:{width:game.world.width,height:game.world.height}}),get version(){return '1.2.1';}};
-  updateSound();updateUI();intro();requestAnimationFrame(frame);
+  globalThis.GringoGame={snapshot:()=>game.snapshot(),view:()=>({camera:{...camera},overview,rooms:game.world.rooms.map(r=>({...r})),world:{width:game.world.width,height:game.world.height}}),get version(){return '1.3.0';}};
+  let saved=null;try{saved=JSON.parse(storage.get(SAVE_KEY));}catch{}
+  game.restore(saved);
+  updateSound();start();resizeCanvas();requestAnimationFrame(frame);
 })();

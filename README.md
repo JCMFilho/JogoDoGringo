@@ -12,11 +12,21 @@ npm start
 
 Acesse `http://127.0.0.1:4173`. O jogo também funciona em telas menores, com controles por toque.
 
+### Home e ajuda — versão 1.3
+
+A página inicial `/` abre o jogo diretamente e retoma o save deste navegador, quando disponível. A apresentação e o manual ficam em `/help/` (acessar `/help` também funciona). No menu do jogo, **Como jogar** oferece uma consulta rápida e um link para a página completa. A música aguarda o primeiro clique ou tecla para começar.
+
+A interface usa a fonte do sistema, com textos maiores nos menus. O Canvas ajusta a resolução ao tamanho visível e à densidade da tela; as letras são desenhadas em alta resolução, enquanto os sprites mantêm o estilo pixel art. O salvamento e as coordenadas dos cliques são independentes da resolução de renderização.
+
+No GitHub Pages, selecione **GitHub Actions** como fonte: o workflow publica `dist/`, onde estão tanto a home quanto `help/index.html`. Em um site de projeto, os endereços serão `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/` e `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/help/`.
+
+Também há entradas `index.html` e `help/index.html` na raiz, para quem já publica a branch com **Deploy from a branch → /(root)**. Elas abrem o jogo e a ajuda no próprio endereço, sem redirecionar para `dist/`. Após editar o HTML de `dist/`, execute `npm run build` para sincronizar essas duas entradas. Os sprites e scripts continuam centralizados em `dist/`.
+
 ## Publicar no GitHub Pages
 
-O projeto está preparado para publicar automaticamente o conteúdo de `dist/`, sem build. O workflow `.github/workflows/pages.yml` instala as dependências de desenvolvimento, verifica o JavaScript e executa os testes antes de publicar. O jogo publicado continua sem dependências de servidor.
+O projeto está preparado para publicar automaticamente o conteúdo estático de `dist/`. O workflow `.github/workflows/pages.yml` instala as dependências de desenvolvimento, sincroniza as entradas da raiz, verifica o JavaScript e executa os testes antes de publicar. O jogo publicado continua sem dependências de servidor.
 
-1. Crie um repositório no GitHub e envie o **conteúdo desta pasta `gringo-game` para a raiz do repositório**, incluindo `.github/`, `dist/`, `tests/`, `package.json` e `package-lock.json`. Não coloque tudo dentro de outra pasta `gringo-game` no repositório. Não envie `node_modules/`, `.git/`, `.qa/` nem a foto original.
+1. Crie um repositório no GitHub e envie o **conteúdo desta pasta do projeto para a raiz do repositório**, incluindo `.github/`, `dist/`, `scripts/`, `tests/`, `index.html`, `help/`, `.nojekyll`, `package.json` e `package-lock.json`. Não coloque tudo dentro de outra subpasta no repositório. Não envie `node_modules/`, `.git/`, `.qa/` nem a foto original.
 2. Use `main` ou `master` como branch padrão do repositório.
 3. Em **Settings → Pages → Build and deployment → Source**, selecione **GitHub Actions**.
 4. Em **Actions**, selecione **Publicar jogo no GitHub Pages** e clique em **Run workflow** na branch padrão. Os próximos pushes nessa branch publicarão as atualizações automaticamente.
@@ -24,7 +34,7 @@ O projeto está preparado para publicar automaticamente o conteúdo de `dist/`, 
 
 Não é necessário cadastrar tokens ou secrets: o workflow usa o `GITHUB_TOKEN` automático com as permissões do Pages. Somente `dist/` é enviado ao site. Os caminhos dos scripts, estilos e sprites são relativos, portanto funcionam também no subdiretório do repositório. O arquivo `dist/.nojekyll` permite servir essa pasta como arquivos estáticos também em uma publicação manual.
 
-Para usar a publicação manual **Deploy from a branch**, copie somente o conteúdo de `dist/` para a raiz da branch de publicação ou para `/docs` e selecione essa pasta nas configurações do Pages. Essa alternativa dispensa o workflow.
+Para usar **Deploy from a branch → /(root)** com este projeto, mantenha as entradas da raiz sincronizadas com `npm run build` antes do push. Alternativamente, copie somente o conteúdo de `dist/` para a raiz de outra branch de publicação ou para `/docs`. Essas alternativas dispensam o workflow.
 
 Cada jogador tem seu próprio save no navegador. Trocar o endereço do site não transfere o save do endereço anterior. A música começa após a interação com o jogo.
 

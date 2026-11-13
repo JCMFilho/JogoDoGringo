@@ -33,6 +33,9 @@ jobs:
       - name: Verificar JavaScript
         run: npm run check
 
+      - name: Atualizar home e ajuda
+        run: npm run build
+
       - name: Executar testes
         run: npm test
 
